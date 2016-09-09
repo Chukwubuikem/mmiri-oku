@@ -1,0 +1,47 @@
+<?php
+   // PHP and MYSQL function that shows tables.
+   // No Error handling involved.
+   function get_tables($host_name, $db_user, $db_name, $db_password) {
+    // Establish connection
+    $db_handle = new mysqli($host_name, $db_user, $db_password, $db_name);
+    
+    // Build query string and execute query
+    $tables_query = "SHOW TABLES";
+    $tables_resultID = $db_handle->query($tables_query);
+    
+    // Retrieve number of rows and columns from the result.
+    $row_count = $tables_resultID->num_rows;
+    $column_count = $tables_resultID->field_count;
+    
+    /*----For debugging purposes----*/
+    // echo $row_count;
+    // echo $column_count;
+    /*------------------------------*/
+    
+    // Display the results in a HTML table.
+    echo "<table border ='1'><tr>";
+    
+    for ($i = 0; $i < $column_count; $i++) {
+      // Retrieves the name of the field header/column as named by MYSQL and displays it.
+      $tables_array[$i] = $tables_resultID->fetch_field();
+      echo  "<th>" . $tables_array[$i]->name . "</th>";
+    }
+    
+    // Using two for loops, bounded by the limits of the row and column counts
+    // retrieve the values of the fields in them. 
+    for ($j = 0; $j < $row_count; $j++) {
+      $row = $tables_resultID->fetch_row();
+      echo "<tr>";
+      
+      for ($i = 0; $i < $column_count; $i++) {
+        $tables_array[$i] = $tables_resultID->fetch_field();
+        echo  "<td>" . $row[$i] . "</td>";
+      }
+      echo "</tr>";
+    }
+    
+    echo "</tr>";
+    echo "</table><br/>";
+    //echo $tables_array['Tables_in_user_contacts'];
+   }
+?>
